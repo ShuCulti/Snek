@@ -101,7 +101,7 @@ class SNAKE:
         self.new_block = True
     
     def gen_start_pos(self):
-        center = pygame.Vector2(cell_numberx // 2, cell_numbery // 2)  # (20,15) for 800x600, CELL=20
+        center = pygame.Vector2(cell_numberx // 2, cell_numbery // 2)  # (20,15) is the mid of screen for 800x600, CELL=20
         choices = [
             [center + pygame.Vector2(1,0), center, center - pygame.Vector2(1,0)],   # +x
             [center + pygame.Vector2(-1,0), center, center - pygame.Vector2(-1,0)], # -x
@@ -273,6 +273,7 @@ Width = 800
 Height = 600
 game_mode = ["easy","classic","normal","hard","insane"]
 
+#my SFXs
 crunch = pygame.mixer.Sound("sfx_crunch.wav")
 crunch.set_volume(0.20)
 fail_sound = pygame.mixer.Sound("gameover.wav")
@@ -281,7 +282,6 @@ pygame.mixer.music.load("elevator_music.wav")
 pygame.mixer.music.set_volume(0.15)   
 pygame.mixer.music.play(-1, fade_ms=500) 
 
-# Create screen FIRST
 Rattle_icon = pygame.image.load('/Users/David/Documents/Alletruc/RattleGame/Rattle_icon.png')
 screen = pygame.display.set_mode((Width,Height))
 
@@ -371,7 +371,6 @@ while running:
     screen.blit(high_score,high_score_rect)
     GameUI.draw_borders(screen)
     game.draw_ellem()
-    # GameUI.draw_ui(screen)
     pygame.display.update()
     clock.tick(60)
 pygame.quit()
