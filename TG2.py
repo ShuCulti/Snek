@@ -1,8 +1,5 @@
 import pygame,sys,random,math
-<<<<<<< HEAD
-=======
 from pygame import mixer
->>>>>>> b2d2efb (Initial commit: added Snake game file)
 
 class FOOD:
     def __init__(self):
@@ -26,15 +23,9 @@ class FOOD:
     def randomize(self):
         self.pos = pygame.Vector2(random.randint(0,cell_numberx -1), random.randint(0,cell_numbery - 1))
     
-<<<<<<< HEAD
-    def draw(self):
-        # Create a pulsing effect
-        self.color = (255,0,255)
-=======
     def draw_pulse(self):
         # Creating da pulse
         self.color = (255,185,45)
->>>>>>> b2d2efb (Initial commit: added Snake game file)
         # self.color = (255,200,100)
         self.pulse_value += 0.1 * self.pulse_direction
         if self.pulse_value >= 1.0:
@@ -50,18 +41,6 @@ class FOOD:
             min(255, int(self.color[2] * self.pulse_value))
         )
         
-<<<<<<< HEAD
-        rect = pygame.Rect((self.pos[0] * cell_size, self.pos[1] * cell_size), (cell_size, cell_size))
-        pygame.draw.rect(screen, pulse_color, rect)
-        pygame.draw.rect(screen, (100, 0, 0), rect, 1)
-        pygame.draw.rect(screen, (0, 0, 0), rect, 2)
-
-class SNAKE:
-    def __init__(self):
-        self.body = [pygame.Vector2(5,10), pygame.Vector2(6,10), pygame.Vector2(7,10)]
-        self.direction = pygame.Vector2(1,0)
-        self.new_block = False
-=======
         pulse_rect = pygame.Rect((self.pos.x * cell_size, self.pos.y * cell_size), (cell_size, cell_size))
         pygame.draw.rect(screen, pulse_color, pulse_rect)
         pygame.draw.rect(screen, (100, 0, 0), pulse_rect, 1)
@@ -71,8 +50,6 @@ class SNAKE:
     def __init__(self):
         self.gen_start_pos()
         self.new_block = False
-        self.can_turn = False
->>>>>>> b2d2efb (Initial commit: added Snake game file)
 
     def draw_snake(self):
         for block in self.body:
@@ -80,15 +57,9 @@ class SNAKE:
             self.snake_head = self.body[0]
             snake_head_rect = pygame.Rect(self.snake_head.x * cell_size, self.snake_head.y * cell_size, cell_size, cell_size)
             pygame.draw.rect(screen, 'lightblue', snake_rect)
-<<<<<<< HEAD
-            pygame.draw.rect(screen, 'midnightblue', snake_rect,3)
-            pygame.draw.rect(screen,'lightblue',snake_head_rect)
-            pygame.draw.rect(screen,'black',snake_head_rect,3)
-=======
             pygame.draw.rect(screen, 'blue', snake_rect,3)
             pygame.draw.rect(screen,'lightblue',snake_head_rect)
             pygame.draw.rect(screen,'blue',snake_head_rect,3)
->>>>>>> b2d2efb (Initial commit: added Snake game file)
             #The Snake Eyes RIGHT, LEFT, UP, DOWN
             if self.direction == pygame.Vector2(1,0):
                 pygame.draw.circle(screen,'black',(snake_head_rect.x +15 ,snake_head_rect.y+ 5),5)
@@ -122,17 +93,6 @@ class SNAKE:
             body_copy = self.body[:-1]
             body_copy.insert(0, body_copy[0] + self.direction)
             self.body = body_copy[:]
-<<<<<<< HEAD
-    
-    def add_block(self):
-        self.new_block = True
-    
-    def reset(self):
-        if self.body[0] == self.body[0:]:
-            pygame.quit()
-            sys.exit()
-
-=======
 
         self.can_turn = True
 
@@ -160,7 +120,6 @@ class SNAKE:
     def reset(self):
         self.gen_start_pos()
     
->>>>>>> b2d2efb (Initial commit: added Snake game file)
 class MAIN:
 
     def __init__(self):
@@ -168,74 +127,31 @@ class MAIN:
         self.high_score = 0
         self.snake = SNAKE()
         self.food = FOOD()
-<<<<<<< HEAD
-        self.reset()
-
-
-    def update(self):
-        self.snake.move()
-        self.collision()
-        self.reset()
-
-    def draw_ellem(self):
-        self.snake.draw_snake()
-        self.food.draw_fruit()
-        self.food.draw()
-
-    def collision(self):
-        if self.snake.body[0] == self.food.pos:
-            self.score += 5
-            self.high_score +=5
-            self.food.randomize()
-            self.snake.add_block()
-    
-    def reset(self):
-        if self.snake.body[0] == self.snake.body[0:]:
-            self.game_over()
-
-    def game_over(self):
-        overlay = pygame.Surface((Width, Height), pygame.SRCALPHA)
-        overlay.fill((0, 0, 0, 150))
-        screen.blit(overlay, (0, 0))
-        
-        game_over_text = font_large.render("GAME OVER", True, (220, 50, 50))
-        screen.blit(game_over_text, (Width//2 - game_over_text.get_width()//2, Height//2 - 50))
-        
-        restart_text = font_medium.render("Press R to Restart", True, (220, 220, 220))
-        screen.blit(restart_text, (Width//2 - restart_text.get_width()//2, Height//2 + 20))
-            
-
-=======
         self.initial_ms, self.min_ms, self.step_ms = 150, 10, 10
         self.current_ms = self.initial_ms
-        self.game_state = "START"
+        self.game_active = True
 
     def update(self):
-        if self.game_state != "PLAYING":
+        if not self.game_active:
             return          # paused on game over
         self.snake.move()
         self.collision()
         self.fail()
 
     def draw_ellem(self):
-        if self.game_state == "START":
-            self.start_screen()
-        elif self.game_state == "PLAYING":
+        if self.game_active == True:
             self.snake.draw_snake()
             self.food.draw_fruit()
             self.food.draw_pulse()
-        elif self.game_state == "GAME_OVER":
-            self.snake.draw_snake()
-            self.food.draw_fruit()
-            self.food.draw_pulse()
+    
+        if not self.game_active:
             self.game_overscreen()
             
     
     def start_screen(self):
         overlay = pygame.Surface((Width, Height), pygame.SRCALPHA)
-        overlay.fill((0, 0, 0, 0))
+        overlay.fill((0, 0, 0, 200))
         screen.blit(overlay, (0, 0))
-        screen.blit(Menu_IMG,(0, -5))
         
         title_font = pygame.font.SysFont("arial", 72, bold=True)
         title_text = title_font.render("PYTHON", True, "cyan")
@@ -245,16 +161,16 @@ class MAIN:
         current_time = pygame.time.get_ticks()
         if (current_time // 500) % 2 == 0:  
             start_text = start_font.render("Press SPACE to Start", True, "#FFF200")
-            screen.blit(start_text, (Width//2 - start_text.get_width()//2, Height//2 + 70))
+            screen.blit(start_text, (Width//2 - start_text.get_width()//2, Height//2 + 50))
         
         controls_font = pygame.font.SysFont("arial", 24)
-        controls_text = controls_font.render("Controls: W A S D ⬅️⬆️⬇️➡️ |  R to Restart", True, (180, 180, 180))
+        controls_text = controls_font.render("Controls: W A S D  |  R to Restart", True, (180, 180, 180))
         screen.blit(controls_text, (Width//2 - controls_text.get_width()//2, Height//2 + 100))
         
         if self.high_score > 0:
             score_font = pygame.font.SysFont("arial", 28)
             score_text = score_font.render(f"High Score: {self.high_score}", True, (255, 215, 0))
-            screen.blit(score_text, (Width//2 - score_text.get_width()//2, Height//2 + 200))
+            screen.blit(score_text, (Width//2 - score_text.get_width()//2, Height//2 + 150))
         
     def collision(self):
         if self.snake.body[0] == self.food.pos:
@@ -268,9 +184,6 @@ class MAIN:
 
     
     def fail(self):
-        if self.game_state != "PLAYING":
-            return False
-        
         head = self.snake.body[0]
         x, y = int(head.x), int(head.y)
         out_of_bounds = (x < 0 or x >= cell_numberx or y < 0 or y >= cell_numbery)
@@ -278,19 +191,15 @@ class MAIN:
         if out_of_bounds or hit_self:
             self.game_over()
             pygame.mixer.Sound.play(fail_sound)
-            return True
-        return False
 
     def game_over(self):
         self.high_score = max(self.high_score, self.score)
         self.current_ms = self.initial_ms
-        self.game_state = "GAME_OVER"
-        
+        self.game_active = False
 
     def game_overscreen(self):
         overlay = pygame.Surface((Width, Height), pygame.SRCALPHA)
         overlay.fill((0, 0, 0, 150))
-        
         screen.blit(overlay, (0, 0))
         game_over_text = font_large.render("GAME OVER", True, (220, 50, 50))
         screen.blit(game_over_text, (Width//2 - game_over_text.get_width()//2, Height//2 - 50))
@@ -298,29 +207,16 @@ class MAIN:
         screen.blit(gameoverscore_text, (Width//2 - gameoverscore_text.get_width()//2, Height//2 + 10))
         restart_text = font_medium.render("Press R to Restart", True, (220, 220, 220))
         screen.blit(restart_text, (Width//2 - restart_text.get_width()//2, Height//2 + 50))
-        
 
     def restart(self):
-        if self.game_state == "GAME_OVER":
-            self.score = 0
-            self.snake.reset()
-            self.food.randomize()
-            self.game_state = "PLAYING"
->>>>>>> b2d2efb (Initial commit: added Snake game file)
+        self.score = 0
+        self.snake.reset()
+        self.food.randomize()
+        self.game_active = True
 
 class GameUI:
     def draw_grid(screen):
         for x in range(0,Width,cell_size):
-<<<<<<< HEAD
-            pygame.draw.line(screen,'brown', (x,0), (x,Height))
-        for y in range(0,Height,cell_size):
-            pygame.draw.line(screen,'brown',(0,y), (Width,y))
-    def draw_borders(screen):
-        score_border_rect = pygame.Rect(20,10,100,25)
-        high_score_border_rect = pygame.Rect(140,10,150,25)
-        pygame.draw.rect(screen,'black',score_border_rect,2)
-        pygame.draw.rect(screen,'black',high_score_border_rect,2)
-=======
             pygame.draw.line(screen,(31,36,41), (x,0), (x,Height))
         for y in range(0,Height,cell_size):
             pygame.draw.line(screen,(31,36,41),(0,y), (Width,y))
@@ -329,18 +225,12 @@ class GameUI:
         high_score_border_rect = pygame.Rect(140,10,150,25)
         pygame.draw.rect(screen,'#2B3A55',score_border_rect,2)
         pygame.draw.rect(screen,'#2B3A55',high_score_border_rect,2)
->>>>>>> b2d2efb (Initial commit: added Snake game file)
 
     def draw_score_rect(screen):
         score_bg_rect = pygame.Rect(20,10,100,25)
         high_score_bg_rect = pygame.Rect(140,10,150,25)
-<<<<<<< HEAD
-        pygame.draw.rect(screen,'crimson',score_bg_rect)
-        pygame.draw.rect(screen,'crimson',high_score_bg_rect)
-=======
         pygame.draw.rect(screen,(28,32,38),score_bg_rect)
         pygame.draw.rect(screen,(28,32,38),high_score_bg_rect)
->>>>>>> b2d2efb (Initial commit: added Snake game file)
     
     # def draw_ui(screen):
     # # Score panel
@@ -361,32 +251,13 @@ class GameUI:
 
 
 
-<<<<<<< HEAD
-
-=======
 pygame.init()
 pygame.mixer.init()
->>>>>>> b2d2efb (Initial commit: added Snake game file)
 cell_size = 20
 cell_numberx = 40
 cell_numbery = 30
 Width = 800
 Height = 600
-<<<<<<< HEAD
-game_mode = 'classic'
-
-pygame.init()
-game = MAIN()
-gameUI = GameUI()
-
-Rattle_icon = pygame.image.load('Rattle_icon.png')
-screen = pygame.display.set_mode((Width,Height))
-pygame.display.set_caption('Eastern Diamond Back')
-pygame.display.set_icon(Rattle_icon)
-clock = pygame.time.Clock()
-
-font = pygame.font.SysFont('Arial', 21)
-=======
 game_mode = ["easy","classic","normal","hard","insane"]
 
 crunch = pygame.mixer.Sound("sfx_crunch.wav")
@@ -403,117 +274,43 @@ screen = pygame.display.set_mode((Width,Height))
 pygame.display.set_caption('Eastern Diamond Back')
 pygame.display.set_icon(Rattle_icon)
 
-Menu_IMG = pygame.image.load('Menu_IMG.png')
-Menu_IMG= pygame.transform.scale(Menu_IMG, (800,600))
-
 # THEN create game objects with screen
 game = MAIN()  # Pass screen to MAIN
 gameUI = GameUI()
 
 clock = pygame.time.Clock()
 font = pygame.font.SysFont('Arial', 21, bold= True)
->>>>>>> b2d2efb (Initial commit: added Snake game file)
 font_large = pygame.font.SysFont("arial", 48, bold=True)
 font_medium = pygame.font.SysFont("arial", 32, bold=True)
 
 running = True
-<<<<<<< HEAD
-
-SCREEN_UPDATE = pygame.USEREVENT
-pygame.time.set_timer(SCREEN_UPDATE,150)
-
-=======
 SCREEN_UPDATE = pygame.USEREVENT + 1
 initial_ms, min_ms, step_ms = 150, 50, 10
 pygame.time.set_timer(SCREEN_UPDATE, initial_ms)
->>>>>>> b2d2efb (Initial commit: added Snake game file)
 
 while running:
     for e in pygame.event.get():
         if e.type == pygame.QUIT:
             running = False
-<<<<<<< HEAD
         if e.type == SCREEN_UPDATE:
             game.update()
         if e.type == pygame.KEYDOWN:
-            if e.key == pygame.K_w:
-                if game.snake.direction != pygame.Vector2(0,1):
-                    game.snake.direction = pygame.Vector2(0,-1)
-            if e.key == pygame.K_s:
-                if game.snake.direction != pygame.Vector2(0,-1):
-                    game.snake.direction = pygame.Vector2(0,1)
-            if e.key == pygame.K_a:
-                if game.snake.direction != pygame.Vector2(1,0):
-                    game.snake.direction = pygame.Vector2(-1,0)
-            if e.key == pygame.K_d:
-                if game.snake.direction != pygame.Vector2(-1,0):
-                    game.snake.direction = pygame.Vector2(1,0)
-            if e.key == pygame.K_r:
-                    pass
-
-    screen.fill('lightpink')
-    game.draw_ellem()
-    GameUI.draw_grid(screen)
-    GameUI.draw_score_rect(screen)
-    score = font.render(f'Score:{game.score}', True, (0,0,0),'crimson')
-    high_score = font.render(f'High Score:{game.high_score}', True, (0,0,0),'crimson')
-    score_rect = score.get_rect(topleft = (20,10))
-    high_score_rect = high_score.get_rect(topleft = (140,10))
-    screen.blit(score,score_rect)
-    screen.blit(high_score,high_score_rect)
-    # GameUI.draw_ui(screen)
-    GameUI.draw_borders(screen)
-=======
-
-        if e.type == SCREEN_UPDATE and game.game_state == "PLAYING":
-            game.update()
-
-        if e.type == pygame.KEYDOWN:
-
-            if e.key == pygame.K_r and game.game_state == "GAME_OVER":
+            if e.key == pygame.K_r and not game.game_active:
                 game.restart()
                 pygame.time.set_timer(SCREEN_UPDATE, game.initial_ms)
-
-            if e.key == pygame.K_SPACE:
-                if game.game_state == "START":
-                    game.game_state = "PLAYING"
-
-            if game.game_state == "PLAYING" and game.snake.can_turn:
-                current_dir = game.snake.direction
-                
-                if e.key == pygame.K_w and current_dir.y != 1:
+        if e.type == pygame.KEYDOWN and game.game_active:  
+            if e.key == pygame.K_w:
+                if game.snake.direction.y != 1 and game.snake.direction != pygame.Vector2(0,1):
                     game.snake.direction = pygame.Vector2(0, -1)
-                    game.snake.can_turn = False
-                elif e.key == pygame.K_s and current_dir.y != -1:
+            if e.key == pygame.K_s:
+                if game.snake.direction.y != -1 and game.snake.direction != pygame.Vector2(0,-1):
                     game.snake.direction = pygame.Vector2(0, 1)
-                    game.snake.can_turn = False
-                elif e.key == pygame.K_a and current_dir.x != 1:
+            if e.key == pygame.K_a:
+                if game.snake.direction.x != 1 and game.snake.direction != pygame.Vector2(1,0):
                     game.snake.direction = pygame.Vector2(-1, 0)
-                    game.snake.can_turn = False
-                elif e.key == pygame.K_d and current_dir.x != -1:
+            if e.key == pygame.K_d:
+                if game.snake.direction.x != -1 and game.snake.direction != pygame.Vector2(-1,0):
                     game.snake.direction = pygame.Vector2(1, 0)
-                    game.snake.can_turn = False
-
-                elif e.key == pygame.K_UP:
-                    if game.snake.direction.y != 1 :
-                        game.snake.direction = pygame.Vector2(0, -1)
-                        game.snake.can_turn = False
-
-                elif e.key == pygame.K_DOWN:
-                    if game.snake.direction.y != -1 :
-                        game.snake.direction = pygame.Vector2(0, 1)
-                        game.snake.can_turn = False
-
-                elif e.key == pygame.K_LEFT:
-                    if game.snake.direction.x != 1 :
-                        game.snake.direction = pygame.Vector2(-1, 0)
-                        game.snake.can_turn = False
-
-                elif e.key == pygame.K_RIGHT:
-                    if game.snake.direction.x != -1 :
-                        game.snake.direction = pygame.Vector2(1, 0)
-                        game.snake.can_turn = False
-            
     
     screen.fill((18,20,23))
     GameUI.draw_grid(screen)
@@ -528,7 +325,6 @@ while running:
     GameUI.draw_borders(screen)
     game.draw_ellem()
     # GameUI.draw_ui(screen)
->>>>>>> b2d2efb (Initial commit: added Snake game file)
     pygame.display.update()
     clock.tick(60)
 pygame.quit()

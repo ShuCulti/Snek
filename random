@@ -1,0 +1,129 @@
+import pygame, random, sys
+
+class Fruit:
+    def __init__(self):
+        self.randomize()
+
+    def draw_fruit(self):
+        fruit_rect = pygame.Rect(self.pos.x * cell_size, self.pos.y * cell_size, cell_size, cell_size)
+        pygame.draw.rect(screen,'red',fruit_rect)
+        pygame.draw.rect(screen,'black',fruit_rect,2)
+
+    def randomize(self):
+        self.pos = pygame.Vector2(random.randint(0,cell_numbersx -1), random.randint(0,cell_numbersy -1))
+
+class Snake:
+    def __init__(self):
+        # pick a random cardinal direction
+        self.snake_spawn()
+
+    def draw_snake(self):
+        for block in self.body:
+            snake_rect = pygame.Rect(block.x * cell_size,block.y * cell_size, cell_size, cell_size)
+            pygame.draw.rect(screen,'springgreen',snake_rect)
+            pygame.draw.rect(screen,'black',snake_rect,3)
+
+    def move(self):
+        if self.new_block == True:
+            body_copy = self.body[:]
+            body_copy.insert(0,body_copy[0] + self.direction)
+            self.body = body_copy[:]
+            self.new_block = False
+
+        else:          
+            body_copy = self.body[:-1]
+            body_copy.insert(0,body_copy[0] + self.direction)
+            self.body = body_copy[:]
+
+    def add_block(self):
+        self.new_block = True
+
+    def snake_spawn(self):         
+        self.direction = random.choice([pygame.Vector2(1,0), pygame.Vector2(-1,0), pygame.Vector2(0,1), pygame.Vector2(0,-1)])
+
+        # choose a head position that leaves room for 2 segments "behind" it
+        if self.direction.x == 1:   # moving right, segments behind to the left
+            hx = random.randint(2, cell_numbersx - 1)
+        elif self.direction.x == -1:  # moving left, segments behind to the right
+            hx = random.randint(0, cell_numbersx - 3)
+        else:
+            hx = random.randint(0, cell_numbersx - 1)
+
+        if self.direction.y == 1:   # moving down, segments behind above
+            hy = random.randint(2, cell_numbersy - 1)
+        elif self.direction.y == -1:  # moving up, segments behind below
+            hy = random.randint(0, cell_numbersy - 3)
+        else:
+            hy = random.randint(0, cell_numbersy - 1)
+
+        head = pygame.Vector2(hx, hy)
+        self.body = [head, head - self.direction, head - 2*self.direction]
+        self.new_block = False
+
+class MAIN:
+    def __init__(self):
+        self.snake = Snake()
+        self.fruit = Fruit()
+    
+    def update(self):
+        self.snake.move()
+        self.collision()
+
+    def draw_ellem(self):
+        self.fruit.draw_fruit()
+        self.snake.draw_snake()
+    
+    def collision(self):
+        if self.snake.body[0] == self.fruit.pos:
+            self.fruit.randomize()
+            self.snake.add_block()
+
+
+
+class GameUI:
+    def draw_grid(screen):
+        for x in range(0,Width,cell_size):
+            pygame.draw.line(screen,'midnightblue', (x,Width),(x,0))
+
+        for y in range(0,Width,cell_size):
+            pygame.draw.line(screen,'midnightblue',(Width,y),(0,y))
+
+pygame.init()
+
+cell_size = 20
+cell_numbersx = 40
+cell_numbersy = 30
+Width = 800
+Height = 600
+screen = pygame.display.set_mode((800,600))
+
+running = True
+
+game = MAIN()
+
+SCREEN_UPDATE = pygame.USEREVENT
+pygame.time.set_timer(SCREEN_UPDATE,150)
+
+while running:
+    for e in pygame.event.get():
+        if e.type == SCREEN_UPDATE:
+            game.update()
+        if e.type == pygame.QUIT:
+            running = False
+        if e.type == pygame.KEYDOWN:
+            if e.key == pygame.K_w:
+                game.snake.direction = pygame.Vector2(0,-1)
+            if e.key == pygame.K_s:
+                game.snake.direction = pygame.Vector2(0,1)
+            if e.key == pygame.K_a:
+                game.snake.direction = pygame.Vector2(-1,0)
+            if e.key == pygame.K_d:
+                game.snake.direction = pygame.Vector2(1,0)
+
+    screen.fill('teal')
+    game.fruit.draw_fruit()
+    game.snake.draw_snake()
+    GameUI.draw_grid(screen)
+    pygame.display.update()
+pygame.quit()
+sys.exit()
